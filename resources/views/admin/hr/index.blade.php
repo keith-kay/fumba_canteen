@@ -43,6 +43,15 @@ Canteen Management | HR
                 .colored-toast .swal2-html-container {
                     color: white;
                 }
+                /**/
+                .blurred {
+                filter: blur(6px); /* Blur the cell content */
+                transition: filter 0.3s ease; /* Smooth transition */
+                }
+
+                .blurred:hover {
+                filter: blur(0); /* Remove blur on hover */
+                }
             </style>
             @if(session('success'))
             <script>
@@ -112,10 +121,7 @@ Canteen Management | HR
                             </button>
                         </a>
                     </div>
-
-
                     <!-- -->
-                    
                     <div class="container mt-5">
                         <ul class="nav nav-tabs" id="myTab" role="tablist">
                           <li class="nav-item" role="presentation">
@@ -148,7 +154,7 @@ Canteen Management | HR
                                         <td style="white-space: nowrap;">{{ $guest->bsl_cmn_users_firstname }}
                                             {{$guest->bsl_cmn_users_lastname}}
                                         </td>
-                                        <td style="white-space: nowrap;">{{$guest -> bsl_cmn_users_pin}}</td>
+                                        <td class="blurred" style="white-space: nowrap;">{{$guest -> bsl_cmn_users_pin}}</td>
                                         <td style="white-space: nowrap;">{{$guest -> bsl_cmn_users_days}}</td>
                                         <td style="white-space: nowrap;">
                                             <div class="row">
@@ -186,7 +192,7 @@ Canteen Management | HR
                                         <td style="white-space: nowrap;">{{ $intern->bsl_cmn_users_firstname }}
                                             {{$intern->bsl_cmn_users_lastname}}
                                         </td>
-                                        <td style="white-space: nowrap;">{{$intern->bsl_cmn_users_pin}}</td>
+                                        <td class="blurred" style="white-space: nowrap;">{{$intern->bsl_cmn_users_pin}}</td>
                                         <td style="white-space: nowrap;">{{$intern->bsl_cmn_users_days}}</td>
                                         <td style="white-space: nowrap;">
                                             <div class="row">

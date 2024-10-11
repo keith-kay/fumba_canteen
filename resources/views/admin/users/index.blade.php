@@ -44,6 +44,15 @@ Admin | Roles
     .colored-toast .swal2-html-container {
         color: white;
     }
+    /**/
+    .blurred {
+      filter: blur(6px); /* Blur the cell content */
+      transition: filter 0.3s ease; /* Smooth transition */
+    }
+
+    .blurred:hover {
+      filter: blur(0); /* Remove blur on hover */
+    }
     </style>
     @if(session('success'))
     <script>
@@ -119,7 +128,7 @@ Admin | Roles
                         </td>
                         <td style="white-space: nowrap;">{{$user -> bsl_cmn_users_employment_number}}</td>
                         <td style="white-space: nowrap;">{{$user -> email}}</td>
-                        <td style="white-space: nowrap;">{{$user -> bsl_cmn_users_pin}}</td>
+                        <td class="blurred" style="white-space: nowrap;">{{$user -> bsl_cmn_users_pin}}</td>
                         <td style="white-space: nowrap;">{{$user -> bsl_cmn_users_department}}</td>
                         <td style="white-space: nowrap;">{{$user->userType->bsl_cmn_user_types_name}}</td>
                         <td style="white-space: nowrap;">
