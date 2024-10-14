@@ -11,7 +11,7 @@ Admin | Create Guest
 
             <div class="card-header d-flex justify-content-between">
                 <h5 class="m-0">Guests</h5>
-                <a href="{{ route('guests.index')}}" class="btn btn-danger">Back</a>
+                <a href="{{ route('hr.home')}}" class="btn btn-danger">Back</a>
             </div>
 
             <div class="card-body">

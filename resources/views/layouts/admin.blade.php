@@ -108,7 +108,7 @@
                         <i class="bi bi-grid"></i>
                         <span>Dashboard</span>
                     </a>
-                @else
+                @elseif(auth()->user()->hasRole('super-admin'))
                     <a class="nav-link " href="{{route( 'admin.dashboard' )}}">
                         <i class="bi bi-grid"></i>
                         <span>Dashboard</span>
@@ -118,14 +118,7 @@
 
             </li><!-- End Dashboard Nav -->
 
-            @if( auth()->user()->hasRole('hr') || auth()->user()->hasRole('admin') || auth()->user()->hasRole('super-admin'))
-                    <li class="nav-item">
-                        <a class="nav-link " href="{{ url('guests') }}">
-                            <i class="bi bi-circle"></i><span>Guests</span>
-                        </a>
-                    </li>
-                @endif
-                
+                 
 
             @if( auth()->user()->hasRole('admin') || auth()->user()->hasRole('super-admin'))
             <li class="nav-item">
@@ -134,6 +127,11 @@
                 </a>
                 <ul id="components-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
                 @if(auth()->user()->hasRole('super-admin'))
+                    <li class="nav-item">
+                        <a  href="{{ route('hr.home')}}">
+                            <i class="bi bi-circle"></i><span>Guests</span>
+                        </a>
+                    </li>
                     <li>
                         <a href="{{ url('users') }}">
                             <i class="bi bi-circle"></i><span>Users</span>
@@ -196,7 +194,7 @@
             @endif
             <!-- End Meal-tickets -->
 
-            @if(auth()->user()->hasRole('admin') || auth()->user()->hasRole('super-admin'))
+            @if(auth()->user()->hasRole('hr') || auth()->user()->hasRole('super-admin'))
             <li class="nav-item">
                 <a class="nav-link collapsed" href="{{url('report')}}">
                     <i class="bi bi-grid"></i>

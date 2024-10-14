@@ -258,7 +258,7 @@ Canteen Management | HR
     console.log("Request URL: ", "{{ route('get.sites') }}");
     
     $(document).ready(function() {
-        var table = $('#reports-table').DataTable({
+        var table = $('#users-table').DataTable({
             "paging": true,
             "lengthChange": false,
             "searching": true,

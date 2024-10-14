@@ -30,7 +30,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/admin/hr',[HomeController::class,'hr'])->name('hr.home');
     Route::get('/admin/hr/user',[HRController::class,'createUser'])->name('hr.user.add');
     Route::post('/admin/hr/user',[HRController::class,'storeUser'])->name('hr.user.store');
-    Route::group(['middleware' => ['role:admin|super-admin|hr']], function () {
+    Route::group(['middleware' => ['role:super-admin|hr']], function () {
         Route::get('/fetch-companies', [ReportController::class, 'fetchCompanies'])->name('fetch.companies');
         Route::get('/fetch-sites', [ReportController::class, 'fetchSites'])->name('fetch.sites');
         Route::get('/report', [ReportController::class, 'index'])->name('report');
@@ -40,7 +40,7 @@ Route::middleware('auth')->group(function () {
     });
 
 });
-Route::group(['middleware' => ['role:admin|super-admin|security']], function () {
+Route::group(['middleware' => ['role:super-admin|security|hr']], function () {
     Route::get('/admin/dashboard', [adminDashboardController::class, 'adminDashboard'])->name('admin.dashboard');
     
 });
@@ -118,6 +118,8 @@ Route::post('/logout', [UserController::class, 'logout'])->name('logout');
 Route::get('/', [UserController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [UserController::class, 'login'])->name('login-user');
 Route::get('/logout', [UserController::class, 'logout'])->name('logout');
+
+
 
 //Route::post('/login-user', [UserController::class, 'loginUser'])->name('loginuser');
 // Route::post('/register-user', [UserController::class, 'register'])->name('register-user');

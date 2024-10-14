@@ -17,10 +17,10 @@ class HomeController extends Controller
         $roles = auth()->user()->roles; 
         $role_list = $roles->pluck('name')->toArray();
         $guests = CustomUser::where('bsl_cmn_users_type', 9)->get();
-        $interns = CustomUser::where('bsl_cmn_users_type','!=', 9)->get();
+        $interns = CustomUser::where('bsl_cmn_users_type', 10)->get();
         //remove irrelevant roles
         
-        if(in_array('hr',$role_list)){
+        if (in_array('hr', $role_list) || in_array('super-admin', $role_list)){
            $users = CustomUser::with('userType')
                 ->where('bsl_cmn_users_department', 'Security')
                 ->get();

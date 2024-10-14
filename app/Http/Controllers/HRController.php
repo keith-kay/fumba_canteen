@@ -13,7 +13,7 @@ class HRController extends Controller
 {
     public function createUser(){
         $roles = Role::pluck('name', 'name')->all();
-        $role_list = array_diff($roles,['admin','super-admin','hr']);
+        $role_list = array_diff($roles,['admin','super-admin','hr','security']);
         $shifts = Shifts::pluck('bsl_cmn_shifts_name', 'bsl_cmn_shifts_id')->all();
         $userTypes = User_type::pluck('bsl_cmn_user_types_name', 'bsl_cmn_user_types_id');
         return view('admin.hr.user.create', [

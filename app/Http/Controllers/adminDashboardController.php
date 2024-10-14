@@ -21,61 +21,72 @@ class adminDashboardController extends Controller
     }
     public function adminDashboard()
     {
-        $user = Auth::user();
+        if(auth()->user()->hasRole('hr')){
+            return redirect()->route('hr.home');
+        }
+        else if (auth()->user()->hasRole('security'))
+        {
+            return redirect()->route('securities.index');
+        }
+        else
+        {
+            $user = Auth::user();
 
-        $logs = Logs::with('user', 'mealType', 'site')
-            ->whereDate('bsl_cmn_logs_time', now()->toDateString())
-            ->get();
-        //$logCount = $logs->count();
+            $logs = Logs::with('user', 'mealType', 'site')
+                ->whereDate('bsl_cmn_logs_time', now()->toDateString())
+                ->get();
+            //$logCount = $logs->count();
 
-        $dayShiftStart = Carbon::today()->setHour(7)->setMinute(0)->setSecond(0); // 07:00 day shift start
-        $dayShiftEnd = Carbon::today()->setHour(19)->setMinute(0)->setSecond(0); // 19:00  day shift end
-        $previousDayStart = now()->subDay()->setHour(19)->setMinute(0)->setSecond(0); // 19:00:00 night shift start 
-        $previousDayEnd = now()->subDay()->endOfDay();
-        $currentDayStart = now()->startOfDay();
-        $currentDayEnd = now()->setHour(7)->setMinute(0)->setSecond(0); // 07:00 night shift end
+            $dayShiftStart = Carbon::today()->setHour(7)->setMinute(0)->setSecond(0); // 07:00 day shift start
+            $dayShiftEnd = Carbon::today()->setHour(19)->setMinute(0)->setSecond(0); // 19:00  day shift end
+            $previousDayStart = now()->subDay()->setHour(19)->setMinute(0)->setSecond(0); // 19:00:00 night shift start 
+            $previousDayEnd = now()->subDay()->endOfDay();
+            $currentDayStart = now()->startOfDay();
+            $currentDayEnd = now()->setHour(7)->setMinute(0)->setSecond(0); // 07:00 night shift end
 
 
-        $teaCount = Logs::where('bsl_cmn_logs_mealtype', 1)
-            ->whereBetween('bsl_cmn_logs_time', [$dayShiftStart, $dayShiftEnd])
-            ->count();
-        $lunchCount = Logs::where('bsl_cmn_logs_mealtype', 2)
-            ->whereBetween('bsl_cmn_logs_time', [$dayShiftStart, $dayShiftEnd])
-            ->count();
+            $teaCount = Logs::where('bsl_cmn_logs_mealtype', 1)
+                ->whereBetween('bsl_cmn_logs_time', [$dayShiftStart, $dayShiftEnd])
+                ->count();
+            $lunchCount = Logs::where('bsl_cmn_logs_mealtype', 2)
+                ->whereBetween('bsl_cmn_logs_time', [$dayShiftStart, $dayShiftEnd])
+                ->count();
 
-        // Count the number of logs for supper between 19:00 and 23:59 on the previous day
-        $supperCountPreviousDay = Logs::where('bsl_cmn_logs_mealtype', 3)
-            ->whereBetween('bsl_cmn_logs_time', [$previousDayStart, $previousDayEnd])
-            ->count();
-        // Count the number of logs for supper between 00:00 and 07:00 on the current day
-        $supperCountCurrentDay = Logs::where('bsl_cmn_logs_mealtype', 3)
-            ->whereBetween('bsl_cmn_logs_time', [$currentDayStart, $currentDayEnd])
-            ->count();
+            // Count the number of logs for supper between 19:00 and 23:59 on the previous day
+            $supperCountPreviousDay = Logs::where('bsl_cmn_logs_mealtype', 3)
+                ->whereBetween('bsl_cmn_logs_time', [$previousDayStart, $previousDayEnd])
+                ->count();
+            // Count the number of logs for supper between 00:00 and 07:00 on the current day
+            $supperCountCurrentDay = Logs::where('bsl_cmn_logs_mealtype', 3)
+                ->whereBetween('bsl_cmn_logs_time', [$currentDayStart, $currentDayEnd])
+                ->count();
 
-        // Add the counts together to get the total supper count
-        $supperCount = $supperCountCurrentDay + $supperCountPreviousDay;
+            // Add the counts together to get the total supper count
+            $supperCount = $supperCountCurrentDay + $supperCountPreviousDay;
 
-        //night shift Tea Count between 19:00 and 23:59 on the previous day
-        $nightTeaPrevDay =  Logs::where('bsl_cmn_logs_mealtype', 1)
-            ->whereBetween('bsl_cmn_logs_time', [$previousDayStart, $previousDayEnd])
-            ->count();
+            //night shift Tea Count between 19:00 and 23:59 on the previous day
+            $nightTeaPrevDay =  Logs::where('bsl_cmn_logs_mealtype', 1)
+                ->whereBetween('bsl_cmn_logs_time', [$previousDayStart, $previousDayEnd])
+                ->count();
 
-        // Count the number of logs for tea between 00:00 and 07:00 on the current day
-        $nightTeaCurrDay = Logs::where('bsl_cmn_logs_mealtype', 1)
-            ->whereBetween('bsl_cmn_logs_time', [$currentDayStart, $currentDayEnd])
-            ->count();
+            // Count the number of logs for tea between 00:00 and 07:00 on the current day
+            $nightTeaCurrDay = Logs::where('bsl_cmn_logs_mealtype', 1)
+                ->whereBetween('bsl_cmn_logs_time', [$currentDayStart, $currentDayEnd])
+                ->count();
 
-        $nightTeaCount = $nightTeaPrevDay + $nightTeaCurrDay;
+            $nightTeaCount = $nightTeaPrevDay + $nightTeaCurrDay;
 
-        //echo $teaCount;
-        //dd($logs);
-        return view('admin.dashboard', [
-            'user' => $user,
-            'logs' => $logs,
-            'teaCount' => $teaCount,
-            'lunchCount' => $lunchCount,
-            'supperCount' => $supperCount,
-            'nightTeaCount' => $nightTeaCount
-        ]);
+            //echo $teaCount;
+            //dd($logs);
+            return view('admin.dashboard', [
+                'user' => $user,
+                'logs' => $logs,
+                'teaCount' => $teaCount,
+                'lunchCount' => $lunchCount,
+                'supperCount' => $supperCount,
+                'nightTeaCount' => $nightTeaCount
+            ]);
+
+        } 
     }
 }

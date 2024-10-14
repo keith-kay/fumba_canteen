@@ -10,7 +10,8 @@ Admin | Create User
         <div class="card">
 
             <div class="card-header d-flex justify-content-between py-2 px-3">
-                <h5 class="m-0">Users</h5>
+                <h5 class="m-0">Intern</h5>
+                <a href="{{ route('hr.home')}}" class="btn btn-danger">Back</a>
             </div>
 
             <div class="card-body">
