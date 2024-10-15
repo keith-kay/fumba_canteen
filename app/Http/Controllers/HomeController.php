@@ -16,8 +16,8 @@ class HomeController extends Controller
     public function hr(){
         $roles = auth()->user()->roles; 
         $role_list = $roles->pluck('name')->toArray();
-        $guests = CustomUser::where('bsl_cmn_users_type', 9)->get();
-        $interns = CustomUser::where('bsl_cmn_users_type', 10)->get();
+        $guests = CustomUser::where('bsl_cmn_users_type', 3)->get();
+        $interns = CustomUser::where('bsl_cmn_users_type', 4)->get();
         //remove irrelevant roles
         
         if (in_array('hr', $role_list) || in_array('super-admin', $role_list)){

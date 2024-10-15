@@ -219,13 +219,6 @@ Canteen Management | HR
             </div>
             
         </div>
-        @if(auth()->user()->hasRole('security') || auth()->user()->hasRole('super-admin'))
-        <div class="form-group row mt-3 mb-2">
-            <div class="col-sm-12 text-end"> <!-- Align the button to the right -->
-                <a class="btn btn-success print-btn print-btn">Print</a>
-            </div>
-        </div>
-        @endif
         </div>
     </div>
 </div>

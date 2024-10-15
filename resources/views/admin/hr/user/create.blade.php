@@ -33,15 +33,8 @@ Admin | Create User
                             <label for="name" class="fw-bold">Email</label>
                             <input type="text" name="email" class="form-control">
                         </div>
-                        <div class="mb-3 mt-3 col-lg-4">
-                            <label for="name" class="fw-bold">Employment Number</label>
-                            <input type="text" name="employment_number" class="form-control">
-                        </div>
-                        <div class="mb-3 mt-3 col-lg-4">
-                            <label for="name" class="fw-bold">Department</label>
-                            <input type="text" name="department" class="form-control">
-                        </div>
-                        <div class="mb-3 mt-2 col-lg-4">
+                        
+                        <div class="mb-3 mt-2 col-lg-6">
                             <label for="user_type_id" class="form-label fw-bold">Company</label>
                             <select class="form-select" id="user_type_id" name="user_type_id" required>
                                 <option value="">Select Company</option>
@@ -52,17 +45,8 @@ Admin | Create User
 
                         </div>
                         <input type="hidden" name="password" value="P@ssword">
-
-                        <div class="mb-3 mt-3 col-lg-6">
-                            <label for="name" class="fw-bold">Roles</label>
-                            <select name="roles[]" class="form-control" multiple>
-                                <option value="">Select Role</option>
-                                @foreach ($roles as $role)
-                                <option value="{{$role}}">{{ ucfirst($role) }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="mb-3 mt-3 col-lg-6">
+			
+			<div class="mb-3 mt-3 col-lg-6">
                             <label for="user_type_id" class="form-label fw-bold">Shifts</label>
                             <select class="form-select" id="user_type_id" name="shift[]" required>
                                 <option value="">Select Shift</option>
@@ -71,6 +55,17 @@ Admin | Create User
                                 @endforeach
                             </select>
                         </div>
+                        
+			<div class="mb-3 mt-3 col-lg-6">
+                            <label for="name" class="fw-bold">Roles</label>
+                            <select name="roles[]" class="form-control" multiple>
+                                <option value="">Select Role</option>
+                                @foreach ($roles as $role)
+                                <option value="{{$role}}">{{ ucfirst($role) }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        
 
                         <input type="hidden" id="status" name="status" value="1">
 

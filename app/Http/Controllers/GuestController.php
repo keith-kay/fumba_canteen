@@ -16,7 +16,7 @@ class GuestController extends Controller
 {
     public function index()
     {
-        $guests = CustomUser::where('bsl_cmn_users_type', 9)->get();
+        $guests = CustomUser::where('bsl_cmn_users_type', 3)->get();
         return view('admin.guests.index', ['guests' => $guests]);
     }
     public function create()
@@ -51,7 +51,7 @@ class GuestController extends Controller
             $guest->bsl_cmn_users_pin = $pin;
             $guest->bsl_cmn_users_department = "GUEST";
             $guest->bsl_cmn_users_days = $validatedData['no_of_days'];
-            $guest->bsl_cmn_users_type = 9; // Assign the 'Guest' user type directly
+            $guest->bsl_cmn_users_type = 3; // Assign the 'Guest' user type directly
             $guest->password = Hash::make($request->input('password','P@ssword'));
             $guest->save();
 
@@ -60,7 +60,7 @@ class GuestController extends Controller
             $guest->shifts()->attach(1); //Assign user to Normal user shift
 
             // Redirect or respond with success
-            return redirect()->route('guests.index')->with('success', 'Guest registered successfully!');
+            return redirect()->route('hr.home')->with('success', 'Guest registered successfully!');
 
         } catch (ValidationException $e) {
             // Return response with validation errors
@@ -72,7 +72,7 @@ class GuestController extends Controller
     private function generateGuestId()
     {
         // Get the last inserted guest with the 'Guest' user type (3)
-        $lastGuest = CustomUser::where('bsl_cmn_users_type', 9) // Use '3' for Guest type
+        $lastGuest = CustomUser::where('bsl_cmn_users_type', 3) // Use '3' for Guest type
                             ->orderBy('bsl_cmn_users_employment_number', 'desc')
                             ->first();
 
@@ -94,6 +94,6 @@ class GuestController extends Controller
     {
         $guest = CustomUser::find($guestId);
         $guest->delete();
-        return redirect('guests')->with('error', 'Guest Deleted Successfully');
+        return redirect()->route('hr.home')->with('error', 'User Deleted Successfully');
     }
 }
