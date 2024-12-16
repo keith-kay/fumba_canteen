@@ -58,6 +58,7 @@ Route::group(['middleware' => ['role:super-admin']], function () {
     Route::get('users/{userid}/delete', [App\Http\Controllers\UserController::class, 'destroy']);
 
     Route::get('logs/{ticketid}/delete', [App\Http\Controllers\MealticketController::class, 'destroy']);
+    Route::get('logs/{ticketid}/print', [App\Http\Controllers\MealticketController::class, 'printTicket']);
 
     Route::resource('companies', CompanyController::class);
     Route::get('companies/{companyid}/delete', [App\Http\Controllers\CompanyController::class, 'destroy']);
@@ -76,6 +77,12 @@ Route::group(['middleware' => ['role:super-admin']], function () {
     Route::post('/print-ticket', [MealticketController::class, 'printTicket'])->name('print.ticket');
 
     Route::resource('securities', SecurityMealTicket::class);
+    Route::get('admin/reports', [ReportController::class, 'index'])->name('admin.reports');
+    Route::get('/admin/reports/filtered', [ReportController::class, 'filteredLogs'])->name('admin.reports.filtered');
+    Route::get('/admin/reports/export', [ReportController::class, 'export'])->name('admin.reports.export');
+
+    Route::get('admin/tickets', [MealticketController::class, 'index'])->name('admin.tickets');
+
 
     // Route::get('/ticket', [MealticketController::class, 'index'])->name('ticket');
 
@@ -87,9 +94,12 @@ Route::group(['middleware' => ['role:super-admin']], function () {
     
 });
 
-
-
-
+Route::group(['middleware' => ['role:super-admin|hr']], function () {
+    Route::get('admin/reports', [ReportController::class, 'index'])->name('admin.reports');
+    Route::get('/admin/reports/filtered', [ReportController::class, 'filteredLogs'])->name('admin.reports.filtered');
+    Route::get('/admin/reports/export', [ReportController::class, 'export'])->name('admin.reports.export');
+    
+});
 
 
 Route::group(['middleware' => ['role:security|super-admin']], function () {

@@ -15,7 +15,7 @@ class HRController extends Controller
         $roles = Role::pluck('name', 'name')->all();
         $role_list = array_diff($roles,['admin','super-admin','hr','security']);
         $shifts = Shifts::pluck('bsl_cmn_shifts_name', 'bsl_cmn_shifts_id')->all();
-        $userTypes = User_type::where('bsl_cmn_user_types_id', 4)
+        $userTypes = User_type::where('bsl_cmn_user_types_id', 6)
             ->pluck('bsl_cmn_user_types_name', 'bsl_cmn_user_types_id');
         return view('admin.hr.user.create', [
             'roles' => $role_list,
@@ -85,7 +85,7 @@ class HRController extends Controller
     private function generateGuestId()
     {
         // Get the last inserted guest with the 'Guest' user type (3)
-        $lastIntern = CustomUser::where('bsl_cmn_users_type', 4) // Use '3' for Guest type
+        $lastIntern = CustomUser::where('bsl_cmn_users_type', 6) // Use '3' for Guest type
                             ->orderBy('bsl_cmn_users_employment_number', 'desc')
                             ->first();
 

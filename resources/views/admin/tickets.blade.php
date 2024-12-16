@@ -91,8 +91,26 @@ Admin | Tickets
     <div class="card">
         <div class="card-body">
             <h5 class="card-title">Tickets</h5>
+
+            <!-- Meal Type filtering options -->
+            {{-- <div class="form-group row mt-3">
+                
+                <div class="col-sm-6">
+                    <label class="col-form-label fw-bold">Company:</label>
+                    <select class="form-select" id="company-select">
+                        <option value="">Select a company</option>
+                    </select>
+                </div>
+                <div class="col-sm-6">
+                    <label class="col-form-label fw-bold">Site:</label>
+                    <select class="form-select" id="site-select">
+                        <option value="">Select a site</option>
+                    </select>
+                </div>
+            </div> --}}
             
-            <table id="reports-table" class="table table-border-less table-striped my-3">
+            
+            <table id="reports-table" class="table table-borderless table-striped my-3">
                 <thead>
                     <tr>
                         <th>Name</th>
@@ -108,30 +126,7 @@ Admin | Tickets
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($logs as $log)
-                    <tr data-user-id="{{ $log->user->bsl_cmn_users_id }}">
-                        <td>{{ $log->user->bsl_cmn_users_firstname }} {{ $log->user->bsl_cmn_users_lastname }}</td>
-                        <td>{{ $log->user->bsl_cmn_users_employment_number }}</td>
-                        <td>{{ $log->user->userType->bsl_cmn_user_types_name }}</td>
-                        <td>{{ $log->site ? $log->site->bsl_cmn_sites_name : 'No site available' }}</td>
-                        <td>{{$log->user->bsl_cmn_users_department}}</td>
-                        <td>{{ $log->mealType->bsl_cmn_mealtypes_mealname }}</td>
-                        <td>{{ $log->bsl_cmn_logs_time }}</td>
-                        @if(auth()->user()->hasRole('super-admin'))
-                        <td style="white-space: nowrap;">
-                            <div class="row">
-                                <div class="col mb-1">
-                                    <a class="btn btn-success print-btn">Print</a>
-                                </div>
-                                <div class="col">
-                                    <a href="{{ url('logs/'.$log->bsl_cmn_logs_id.'/delete') }}"
-                                        class="btn btn-danger btn-block">Delete</a>
-                                </div>
-                            </div>
-                        </td>
-                        @endif
-                    </tr>
-                    @endforeach
+                    
                 </tbody>
             </table>
         </div>
@@ -145,26 +140,205 @@ Admin | Tickets
 <!-- Include jQuery -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <!-- Include DataTables JavaScript -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.0/xlsx.full.min.js"></script>
 
-<script>
-    
-    
+{{-- <script>
     $(document).ready(function() {
+        // Declare DataTable globally
         var table = $('#reports-table').DataTable({
-            "paging": true,
-            "lengthChange": false,
-            "searching": true,
-            "ordering": true,
-            "info": true,
-            "autoWidth": false,
-            "responsive": true,
-            "pageLength": 10 // Display 10 rows per page
+            processing: true,
+            serverSide: true,
+            paging: true,
+            lengthChange: false,
+            searching: true,
+            ordering: true,
+            info: true,
+            autoWidth: false,
+            responsive: true,
+            pageLength: 10,
+            ajax: "{{ route('admin.tickets') }}",
+            columns: [
+                { data: 'full_name' },
+                { data: 'employment_number' },
+                { data: 'user_type' },
+                { data: 'site' },
+                { data: 'department' },
+                { data: 'meal_type' },
+                { data: 'bsl_cmn_logs_time' },
+                @if(auth()->user()->hasRole('super-admin'))
+                {
+                    data: 'bsl_cmn_logs_id', // Use `null` to define a custom rendering column
+                    orderable: false, // Disable sorting
+                    searchable: false, // Disable searching
+                    render: function(data, type, row) {
+                        return `
+                            <div class="row">
+                                <div class="col mb-1">
+                                    <a href="#" class="btn btn-success print-btn">Print</a>
+                                </div>
+                                <div class="col">
+                                    <a href="/logs/${data}/delete" class="btn btn-danger btn-block">Delete</a>
+                                </div>
+                            </div>
+                        `;
+                    }
+                }
+                @endif
+            ]
+
         });
 
-        
-    });
-</script>
+        // Fetch and populate the company dropdown
+        $.ajax({
+            url: "{{ route('fetch.companies') }}",
+            method: 'GET',
+            success: function(data) {
+                var companySelect = $('#company-select');
+                companySelect.empty();
+                companySelect.append('<option value="">Select a company</option>');
+                
+                $.each(data, function(index, company) {
+                    companySelect.append('<option value="' + company.bsl_cmn_user_types_id + '">' + company.bsl_cmn_user_types_name + '</option>');
+                });
+            }
+        });
 
+        // Fetch and populate the site dropdown
+        $.ajax({
+            url: "{{ route('fetch.sites') }}",
+            method: 'GET',
+            success: function(data) {
+                var siteSelect = $('#site-select');
+                siteSelect.empty();
+                siteSelect.append('<option value="">Select a site</option>');
+                $.each(data, function(index, site) {
+                    siteSelect.append('<option value="' + site.bsl_cmn_sites_id + '">' + site.bsl_cmn_sites_name + '</option>');
+                });
+            }
+        });
+
+        // Apply filters and reload DataTable
+        $('#filter-btn').on('click', function() {
+            var fromDate = $('#from_date').val();
+            var toDate = $('#to_date').val();
+            var selectedCompany = $('#company-select').val();
+            var selectedSite = $('#site-select').val();
+
+            table.ajax.url("{{ route('admin.reports.filtered') }}" +
+                "?from_date=" + fromDate +
+                "&to_date=" + toDate +
+                "&company=" + selectedCompany +
+                "&site=" + selectedSite
+            ).load();
+        });
+
+        // Reset filters and reload DataTable with default data
+        $('#reset-btn').on('click', function() {
+            $('#from_date').val('');
+            $('#to_date').val('');
+            $('.meal-type-checkbox').prop('checked', false);
+            $('#company-select').val('');
+            $('#site-select').val('');
+
+            table.ajax.url("{{ route('admin.reports') }}").load();
+        });
+
+    });
+
+    // Export to Excel function
+    function downloadExcel() {
+            // Get the current filter values
+            var fromDate = $('#from_date').val();
+            var toDate = $('#to_date').val();
+            var selectedCompany = $('#company-select').val();
+            var selectedSite = $('#site-select').val();
+            
+            // Construct the URL with the filter parameters
+            var url = "{{ route('admin.reports.export') }}" + 
+                "?from_date=" + fromDate + 
+                "&to_date=" + toDate + 
+                "&company=" + selectedCompany + 
+                "&site=" + selectedSite;
+            
+            // Fetch the filtered data
+            fetch(url, {
+                method: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('No data found or server error!');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.length === 0) {
+                    alert('No records found for the selected filters.');
+                    return;
+                }
+
+                const ws = XLSX.utils.json_to_sheet(data);
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, "FilteredData");
+                XLSX.writeFile(wb, 'MealTicketsReport.xlsx');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to download data. ' + error.message);
+            });
+    }
+
+</script> --}}
+<script>
+    $(document).ready(function() {
+    $('#reports-table').DataTable({
+        processing: true,
+        serverSide: true,
+        paging: true,
+        lengthChange: false,
+        searching: true,
+        ordering: true,
+        info: true,
+        autoWidth: false,
+        responsive: true,
+        pageLength: 10,
+        ajax: {
+            url: "{{ route('admin.tickets') }}", // URL to the controller method
+            type: "GET"
+            
+        },
+        columns: [
+            { data: 'full_name', name: 'full_name' },
+            { data: 'employment_number', name: 'employment_number' },
+            { data: 'user_type', name: 'user_type' },
+            { data: 'site', name: 'site' },
+            { data: 'department', name: 'department' },
+            { data: 'meal_type', name: 'meal_type' },
+            { data: 'bsl_cmn_logs_time', name: 'bsl_cmn_logs_time' },
+            {
+                data: 'bsl_cmn_logs_id',
+                name: 'actions',
+                orderable: false,
+                searchable: false,
+                render: function(data, type, row) {
+                    return `<div class="row">
+                                <div class="col mb-1">
+                                    <a href="/logs/${data}/print" class="btn btn-success print-btn">Print</a>
+                                </div>
+                                <div class="col">
+                                    <a href="/logs/${data}/delete" class="btn btn-danger btn-block">Delete</a>
+                                </div>
+                            </div>`;
+                }
+            }
+        ]
+    });
+});
+
+</script>
 @stop

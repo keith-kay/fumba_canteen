@@ -16,7 +16,7 @@ class GuestController extends Controller
 {
     public function index()
     {
-        $guests = CustomUser::where('bsl_cmn_users_type', 3)->get();
+        $guests = CustomUser::where('bsl_cmn_users_type', 5)->get();
         return view('admin.guests.index', ['guests' => $guests]);
     }
     public function create()
@@ -51,7 +51,7 @@ class GuestController extends Controller
             $guest->bsl_cmn_users_pin = $pin;
             $guest->bsl_cmn_users_department = "GUEST";
             $guest->bsl_cmn_users_days = $validatedData['no_of_days'];
-            $guest->bsl_cmn_users_type = 3; // Assign the 'Guest' user type directly
+            $guest->bsl_cmn_users_type = 5; // Assign the 'Guest' user type directly
             $guest->password = Hash::make($request->input('password','P@ssword'));
             $guest->save();
 
@@ -72,10 +72,10 @@ class GuestController extends Controller
     private function generateGuestId()
     {
         // Get the last inserted guest with the 'Guest' user type (3)
-        $lastGuest = CustomUser::where('bsl_cmn_users_type', 3) // Use '3' for Guest type
+        $lastGuest = CustomUser::where('bsl_cmn_users_type', 5) // Use '3' for Guest type
                             ->orderBy('bsl_cmn_users_employment_number', 'desc')
-                            ->first();
-
+			    ->first();
+	
         // Default starting ID if no guests are present
         $nextId = 'GUEST001';
 
