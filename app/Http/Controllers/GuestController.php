@@ -51,7 +51,7 @@ class GuestController extends Controller
             $guest->bsl_cmn_users_pin = $pin;
             $guest->bsl_cmn_users_department = "GUEST";
             $guest->bsl_cmn_users_days = $validatedData['no_of_days'];
-            $guest->bsl_cmn_users_type = 5; // Assign the 'Guest' user type directly
+            $guest->bsl_cmn_users_type = 12; // Assign the 'Guest' user type directly
             $guest->password = Hash::make($request->input('password','P@ssword'));
             $guest->save();
 
@@ -72,7 +72,7 @@ class GuestController extends Controller
     private function generateGuestId()
     {
         // Get the last inserted guest with the 'Guest' user type (3)
-        $lastGuest = CustomUser::where('bsl_cmn_users_type', 5) // Use '3' for Guest type
+        $lastGuest = CustomUser::where('bsl_cmn_users_type', 12) // Use '3' for Guest type
                             ->orderBy('bsl_cmn_users_employment_number', 'desc')
 			    ->first();
 	
@@ -82,7 +82,7 @@ class GuestController extends Controller
         // Check if there is a last guest entry
         if ($lastGuest) {
             // Extract the number from the last guest ID (e.g., GUEST001 -> 001)
-            $lastIdNumber = (int) substr($lastGuest->bsl_cmn_users_employment_number, 5);
+            $lastIdNumber = (int) substr($lastGuest->bsl_cmn_users_employment_number, 12);
 
             // Increment the number and format it back to the guest ID format (e.g., 2 -> GUEST002)
             $nextId = 'GUEST' . str_pad($lastIdNumber + 1, 3, '0', STR_PAD_LEFT);
