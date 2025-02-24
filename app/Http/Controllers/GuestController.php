@@ -102,8 +102,13 @@ class GuestController extends Controller
     }
     public function destroy($guestId)
     {
+        
         $guest = CustomUser::find($guestId);
-        $guest->delete();
-        return redirect()->route('hr.home')->with('error', 'User Deleted Successfully');
+        
+        // Update the user's status to 0 instead of deleting
+        $guest->bsl_cmn_users_status = 0;
+        $guest->save();
+
+        return redirect()->route('hr.home')->with('error', 'User status updated to inactive!');
     }
 }

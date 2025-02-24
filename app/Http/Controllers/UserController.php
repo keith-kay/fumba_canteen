@@ -91,7 +91,7 @@ class UserController extends Controller
             // Check if the user is inactive
             if ($user->bsl_cmn_users_status == 0) 
             {
-                return back()->withInput()->with('error', 'Inactive contact IT admin');
+                return back()->withInput()->with('error', 'User inactive! Contact IT admin');
             }
 
             // Check if user is authenticated
@@ -301,7 +301,7 @@ class UserController extends Controller
         if ($user) {
             // Check if the user is inactive
             if ($user->bsl_cmn_users_status == 0) {
-                return back()->withInput()->with('fail', 'Inactive contact IT admin');
+                return back()->withInput()->with('fail', 'User inactive! Contact IT admin');
             }
 
             // Prepare the credentials for authentication

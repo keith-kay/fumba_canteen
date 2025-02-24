@@ -160,7 +160,7 @@ Canteen Management | HR
                                             <div class="row">
                                                 <div class="col">
                                                     <a href="{{ url('guests/'.$guest->bsl_cmn_users_id.'/delete') }}"
-                                                        class="btn btn-danger btn-block">Delete</a>
+                                                        class="btn btn-danger btn-block">Disable</a>
                                                 </div>
                                             </div>
                                         </td>
@@ -198,7 +198,7 @@ Canteen Management | HR
                                             <div class="row">
                                                 <div class="col">
                                                     <a href="{{ url('guests/'.$intern->bsl_cmn_users_id.'/delete') }}"
-                                                        class="btn btn-danger btn-block">Delete</a>
+                                                        class="btn btn-danger btn-block">Disable</a>
                                                 </div>
                                             </div>
                                         </td>
