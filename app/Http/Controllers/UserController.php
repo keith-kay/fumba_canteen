@@ -88,7 +88,11 @@ class UserController extends Controller
             // Log in the user
             Auth::login($user);
 
-
+            // Check if the user is inactive
+            if ($user->bsl_cmn_users_status == 0) 
+            {
+                return back()->withInput()->with('error', 'Inactive contact IT admin');
+            }
 
             // Check if user is authenticated
             if (Auth::check()) {
@@ -200,6 +204,12 @@ class UserController extends Controller
         $userRoles = $user->roles->pluck('name', 'name')->all();
         $userTypes = User_type::pluck('bsl_cmn_user_types_name', 'bsl_cmn_user_types_id');
 
+        // Define status options
+        $statusOptions = [
+            1 => 'Active',
+            0 => 'Inactive'
+        ];
+
         // Retrieve all shifts available (for dropdown selection)
         $allShifts = Shifts::pluck('bsl_cmn_shifts_name', 'bsl_cmn_shifts_id');
 
@@ -212,6 +222,7 @@ class UserController extends Controller
             'userTypes' => $userTypes,
             'userRoles' => $userRoles,
             'allShifts' => $allShifts,
+            'statusOptions' => $statusOptions
         ]);
     }
     public function update(Request $request, CustomUser $user)
@@ -227,6 +238,7 @@ class UserController extends Controller
             'department' => 'nullable|string',
             'roles' => 'required',
             'shifts' => 'nullable|array',
+            'status' => 'required|string',
             'pin'=> 'required|string|max:4'
         ]);
         // Check if the PIN already exists for a different user
@@ -246,6 +258,7 @@ class UserController extends Controller
             'bsl_cmn_users_status' => $request->status,
             'email' => $request->email,
             'bsl_cmn_users_department' => $request->department,
+            'bsl_cmn_users_status' => $request->status,
             'bsl_cmn_users_pin' => $request->pin,
         ];
 
@@ -264,9 +277,12 @@ class UserController extends Controller
     public function destroy($userid)
     {
         $user = CustomUser::findOrFail($userid);
-        $user->delete();
+        
+        // Update the user's status to 0 instead of deleting
+        $user->bsl_cmn_users_status = 0;
+        $user->save();
 
-        return redirect('/users')->with('status', 'User deleted!');
+        return redirect('/users')->with('error', 'User status updated to inactive!');
     }
     public function adminLogin()
     {
@@ -274,7 +290,6 @@ class UserController extends Controller
     }
     public function loginUser(Request $request)
     {
-
         $request->validate([
             'email' => 'required|email',
             'password' => 'required|min:6'
@@ -284,35 +299,28 @@ class UserController extends Controller
         $user = CustomUser::where('email', $request->email)->first();
 
         if ($user) {
-            // Dump the user's email and password for debugging
+            // Check if the user is inactive
+            if ($user->bsl_cmn_users_status == 0) {
+                return back()->withInput()->with('fail', 'Inactive contact IT admin');
+            }
 
-
+            // Prepare the credentials for authentication
             $credentials = [
                 'email' => $request->email,
                 'password' => $request->password,
             ];
 
-            // Dump the credentials array for debugging
-            // dd($credentials);
-
-            // if ($user->isAdmin()) {
-            //     // Admin user - authenticate using password
-                //dd($user);
-                if (Auth::attempt($credentials)) {
-
-                    return redirect()->route('admin.dashboard');
-                } else {
-                    return back()->withInput()->with('fail', 'Invalid email or password');
-                }
-            // } else {
-            //     // Regular user - authenticate using PIN
-            //     // Logic to authenticate using PIN goes here
-            //     return redirect()->route('/');
-            // }
+            // Attempt to log in
+            if (Auth::attempt($credentials)) {
+                return redirect()->route('admin.dashboard');
+            } else {
+                return back()->withInput()->with('fail', 'Invalid email or password');
+            }
         } else {
             return back()->withInput()->with('fail', 'User not found');
         }
     }
+
     public function adminLogout()
     {
 

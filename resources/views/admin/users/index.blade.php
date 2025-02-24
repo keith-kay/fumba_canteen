@@ -44,6 +44,39 @@ Admin | Roles
     .colored-toast .swal2-html-container {
         color: white;
     }
+
+    .status-active,
+    .status-inactive {
+        display: inline-block; 
+        width: 100px; 
+        text-align: center; 
+    }
+
+
+    .status-active
+    {
+        background-color: #fff;
+        border:2px solid #257c39;
+        color:#257c39;
+        border-radius: 5px;
+        padding: 3px;
+    }
+
+    .status-inactive
+    {
+        background-color: #fff; /* Light red */
+        border:2px solid #d43a4a;
+        color:#d43a4a;
+        border-radius: 5px;
+        padding: 3px;
+    }
+    {
+    background-color: #FFCCCB; /* Light red background */
+    color: #A00000; /* Darker red text for contrast */
+    padding: 4px 8px; /* Some padding */
+    border-radius: 4px; /* Slightly rounded corners */
+    }
+
     /**/
     .blurred {
       filter: blur(6px); /* Blur the cell content */
@@ -108,7 +141,6 @@ Admin | Roles
             <table id="users-table" class="table table-border-less table-striped">
                 <thead>
                     <tr>
-
                         <th>Name</th>
                         <th>Staff No</th>
                         <th>Email</th>
@@ -116,6 +148,7 @@ Admin | Roles
                         <th>Department</th>
                         <th>Company</th>
                         <th>Shift</th>
+                        <th>Status</th>
                         <th>Roles</th>
                         <th>Action</th>
                     </tr>
@@ -123,48 +156,48 @@ Admin | Roles
                 <tbody>
                     @foreach ($users as $user)
                     <tr>
-                        <td style="white-space: nowrap;">{{ $user->bsl_cmn_users_firstname }}
-                            {{$user->bsl_cmn_users_lastname}}
-                        </td>
-                        <td style="white-space: nowrap;">{{$user -> bsl_cmn_users_employment_number}}</td>
-                        <td style="white-space: nowrap;">{{$user -> email}}</td>
-                        <td class="blurred" style="white-space: nowrap;">{{$user -> bsl_cmn_users_pin}}</td>
-                        <td style="white-space: nowrap;">{{$user -> bsl_cmn_users_department}}</td>
-                        <td style="white-space: nowrap;">{{$user->userType->bsl_cmn_user_types_name}}</td>
-                        <td style="white-space: nowrap;">
+                        <td style="white-space: normal; max-width: 100px;">{{ $user->bsl_cmn_users_firstname }} {{$user->bsl_cmn_users_lastname }}</td>
+                        <td style="white-space: normal; max-width: 100px;">{{$user->bsl_cmn_users_employment_number}}</td>
+                        <td style="white-space: normal; max-width: 100px;">{{$user->email}}</td>
+                        <td class="blurred" style="white-space: normal; max-width: 100px;">{{$user->bsl_cmn_users_pin}}</td>
+                        <td style="white-space: normal; max-width: 100px;">{{$user->bsl_cmn_users_department}}</td>
+                        <td style="white-space: normal; max-width: 100px;">{{$user->userType->bsl_cmn_user_types_name}}</td>
+                        <td style="white-space: normal; max-width: 100px;">
                             <div class="d-flex flex-column">
                                 @foreach($user->shifts as $shift)
                                 <span class="badge bg-primary mb-1">{{ $shift->bsl_cmn_shifts_name }}</span>
                                 @endforeach
                             </div>
                         </td>
-                        <td style="white-space: nowrap;">
+                        <td style="white-space: normal; max-width: 100px;">
+                            @if($user->bsl_cmn_users_status == 1)
+                                <span class="status-active">Active <i class="fas fa-check-circle"></i></span>
+                            @else
+                                <span class="status-inactive">Inactive <i class="fas fa-times-circle"></i></span>
+                            @endif
+                        </td>                                                
+                        <td style="white-space: normal; max-width: 100px;">
                             <div class="d-flex flex-column">
                                 @if (!empty($user->getRoleNames()))
                                 @foreach ($user->getRoleNames() as $rolename)
-                                <span for="" class="badge bg-primary mb-1">{{$rolename}}</span>
+                                <span class="badge bg-primary mb-1">{{$rolename}}</span>
                                 @endforeach
                                 @endif
                             </div>
                         </td>
-                        <td style="white-space: nowrap;">
-                            <div class="row">
-                                <div class="col mb-1">
-                                    <a href="{{ url('users/'.$user->bsl_cmn_users_id.'/edit') }}"
-                                        class="btn btn-success btn-block">Edit</a>
-                                </div>
-                                <div class="col">
-                                    <a href="{{ url('users/'.$user->bsl_cmn_users_id.'/delete') }}"
-                                        class="btn btn-danger btn-block">Delete</a>
-                                </div>
+                        <td style="white-space: nowrap; max-width: 120px;">
+                            <div class="d-flex">
+                                <a href="{{ url('users/'.$user->bsl_cmn_users_id.'/edit') }}" class="btn btn-success me-2">Edit</a>
+                                <a href="{{ url('users/'.$user->bsl_cmn_users_id.'/delete') }}" class="btn btn-danger">Disable</a>
                             </div>
-                        </td>
+                        </td>                          
                     </tr>
-
                     @endforeach
                 </tbody>
             </table>
         </div>
+        
+        
 
     </div>
 </div>

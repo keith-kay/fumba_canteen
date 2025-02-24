@@ -7,6 +7,7 @@ use Mike42\Escpos\PrintConnectors\NetworkPrintConnector;
 use Mike42\Escpos\Printer;
 use Mike42\Escpos\EscposImage;
 use App\Models\CustomUser;
+use Illuminate\Support\Facades\Log;
 
 class PrintHelper
 {
@@ -84,8 +85,14 @@ class PrintHelper
             # Close the printer connection
             $printer->close();
         } catch (\Exception $e) {
-            throw new \Exception("Error printing meal ticket: " . $e->getMessage());
+            Log::error("Error printing meal ticket: " . $e->getMessage(), [
+                'printer_address' => $this->printerAddress,
+                'printer_port' => $this->printerPort
+            ]);
+            
+            throw new \Exception("Error printing meal ticket: " . $e->getMessage(), $e->getCode(), $e);
         }
+        
     }
 
     // public function printMealTicket($mealDetails)

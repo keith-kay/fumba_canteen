@@ -52,7 +52,7 @@ Admin | Edit User
                             <input type="password" name="password" value="" class="form-control">
                             @error('password')<span class="text-danger">{!! $message !!}</span>@enderror
                         </div>
-                        <div class="mb-2 col-lg-6">
+                        <div class="mb-2 col-lg-4">
                             <label for="user_type_id" class="form-label fw-bold">Company</label>
                             <select class="form-select" id="user_type_id" name="user_type_id" required>
                                 <option value="">Select User Type</option>
@@ -64,10 +64,21 @@ Admin | Edit User
                             </select>
                             @error('user_type_id')<span class="text-danger">{!! $message !!}</span>@enderror
                         </div>
-                        <div class="mb-2 col-lg-6">
+                        <div class="mb-2 col-lg-4">
                             <label for="name" class="fw-bold">Pin</label>
                             <input type="text" name="pin" value="{{$user->bsl_cmn_users_pin}}" class="form-control">
                             @error('pin')<span class="text-danger">{!! $message !!}</span>@enderror
+                        </div>
+                        <div class="mb-3 col-lg-4">
+                            <label for="user_status" class="form-label fw-bold">Status</label>
+                            <select name="bsl_cmn_users_status" id="user_status" class="form-control" required>
+                                <option value="">Select Status</option>
+                                @foreach ($statusOptions as $key => $value)
+                                    <option value="{{ $key }}" {{ $user->bsl_cmn_users_status == $key ? 'selected' : '' }}>
+                                        {{ $value }}
+                                    </option>
+                                @endforeach
+                            </select>
                         </div>
                         <div class="mb-3 mt-3 col-lg-6">
                             <label for="name" class="fw-bold">Roles</label>
