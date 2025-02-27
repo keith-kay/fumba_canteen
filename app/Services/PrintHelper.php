@@ -180,7 +180,7 @@ class PrintHelper
             $originalHeight
         );
 
-        $resizedFilePath = sys_get_temp_dir() . '/resized_logo.png';
+	$resizedFilePath = storage_path('app/public/resized_logo.png');
         imagepng($resizedImage, $resizedFilePath);
 
         imagedestroy($source);
